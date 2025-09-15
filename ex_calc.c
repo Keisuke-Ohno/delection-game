@@ -1,0 +1,249 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <bitset>
+#include <iostream>
+#include <map>
+
+#define N 4 /*vertexの数*/
+
+int size = 1 << N; /*配列checkの大きさ*/
+
+
+struct Comparer {
+    bool operator() (const std::bitset<128> &b1, const std::bitset<128> &b2) const {
+        if((b1>>64).to_ulong() != (b2>>64).to_ulong()) {
+            if((b1>>64).to_ulong() < (b2>>64).to_ulong()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            std::bitset<128> X;
+            for(int i = 0; i < 128; i++) {
+                if(i < 64) {
+                    X.set(i);
+                }else {
+                    X.reset(i);
+                }
+            }
+            if((b1 & X).to_ulong() < (b2 & X).to_ulong()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+};
+
+
+int calc_total = 0;
+
+std::map<std::bitset<128>, int, Comparer> m;
+
+void Remove(int *Check, int num);
+void Print_subset(int *Check);
+int Continue(int *Check, int size);
+int* Create_Check(void);
+void Print_bits(int a);
+int count_bits(int n);
+int Calc(int *Check);
+int mex(int *arr, int size);
+
+int main(void)
+{
+    int* Check = Create_Check();
+
+    Print_subset(Check);
+
+    printf("size = %d\n", size);
+
+    
+   printf("result = %d\n", Calc(Check)); 
+   printf("calc_total = %d\n", calc_total);
+   printf("mapsize=%d\n", (int)m.size());
+   
+    free(Check);
+    return 0;
+}
+
+int* Create_Check(void)
+{
+    int i;
+    
+     int* Check = (int*)malloc(size * sizeof(int));  // 動的に配列を確保
+    if (Check == NULL) {
+        printf("メモリの確保に失敗しました\n");
+        return NULL;
+    }
+    /*配列の初期化 */
+    for(i = 0; i < size; i++) {
+        Check[i] = 0;
+    }
+
+    for(i = 0; i < size; i++) {
+        if(count_bits(i) == 3 || count_bits(i) == 1) {
+            Check[i] = 1;
+        }
+    }
+
+
+
+    return Check;
+
+} 
+
+
+/*checkのnum番目の要素を取り除く*/
+void Remove(int *Check, int num) 
+{
+    int i;
+    int tmp;
+
+    Check[num] = 0;
+    
+
+    for(i = 1; i < size; i++) {
+        tmp = i & num;
+        if(tmp == num) {
+            Check[i] = 0;
+        }
+        
+    }
+
+}
+void Print_subset(int *Check)
+{
+    int i;
+
+    printf("\n");
+    for(i = 0; i < size; i++) {
+        printf("%d=%d", i, Check[i]);
+        if(Check[i] == 1) {
+            Print_bits(i);
+        }
+        printf("\n");
+    }
+}
+
+int count_bits(int n)
+{
+  int i;
+  int sum=0;
+  for(i=sizeof(int)*N-1;i>=0;i--)
+    sum+=(n>>i)&1;
+  return sum;
+}
+
+void Print_bits(int a)
+{
+    int i;
+    int b;
+    printf(" {");
+    for(i = 0; i < N; i++) {
+        b = (a>>i) & 1;
+        if(b == 1) {
+            printf("%d, ", i+1);
+        }
+
+    }
+    printf("}");
+}
+
+/*終了判定*/
+int Continue(int *Check)
+{
+    int i;
+
+    for(i = 0; i < size; i++) {
+        if(Check[i] == 1) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+
+
+//position N = 1; 先手勝ち
+//position P = -1; 後手勝ち
+
+int Calc(int *Check)
+{
+    //printf("%d,%d,%d\n", Check[3], Check[2], Check[1]);
+    //printf("%d\n", (int)m.size());
+
+
+    //前に調べたかどうかを確認
+
+
+    calc_total++;
+    //yohidasukaisuu
+    int i, j, k;
+    int g_value;
+    int N_P;
+    int Check_copy[size];
+    int mex_o[50];
+    std::bitset<128> b_check;
+
+    for(i = 0; i < size; i++) {
+        if(Check[i] == 1) {
+            b_check.set(i);
+        } else {
+            b_check.reset(i);
+        }
+    }
+
+    //std::cout<<b_check<<std::endl;
+
+    if(m.count(b_check) != 0) {
+        
+        return m.at(b_check);
+    }
+
+
+    
+
+    /*if(Continue(Check, size) == 0 ){
+        return -1;
+    }*/
+    k = 0;
+    for(i = 0; i < size; i++) {
+        if(Check[i] == 1) {
+            for(j = 0; j < N; j++) {
+                Check_copy[j] = Check[j];
+            }
+
+            Remove(Check_copy, i);
+            N_P = Calc(Check_copy);
+
+            mex_o[k] = N_P;
+            k++;
+
+        }
+
+    //mapに追加
+    }
+    g_value = mex(mex_o, k);
+    m.insert(std::make_pair(b_check, g_value));
+
+    return g_value;
+
+}
+    
+int mex(int *arr, int size) {
+    for (int i = 0; ; i++) {   // 0 から順番に探す
+        int found = 0;
+        for (int j = 0; j < size; j++) {
+            if (arr[j] == i) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            return i;  // 含まれていない最小の非負整数を返す
+        }
+    }
+}
+
+    
