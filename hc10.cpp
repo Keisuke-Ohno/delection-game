@@ -5,7 +5,7 @@
 #include <map>
 #include <cstdint>
 
-#define N 7/*vertexの数*/
+#define N 9/*vertexの数*/
 
 /*可変ビット幅での1bit左循環シフト*/
 uint32_t rotl1(uint32_t x, unsigned int width) {
@@ -16,34 +16,39 @@ uint32_t rotl1(uint32_t x, unsigned int width) {
 int size = 1 << N; /*配列checkの大きさ*/
 
 
-/*bitsetの大小を定義する関数(8bitまで)*/
-
+/*bitsetの大小を定義する関数(10bitまで)*/
 
 
 struct Comparer {
-    bool operator()(const std::bitset<256>& b1, const std::bitset<256>& b2) const {
-        uint64_t parts1[4] = {0}, parts2[4] = {0};
+    bool operator()(const std::bitset<1024> &b1, const std::bitset<1024> &b2) const {
+        uint64_t part1[16] = {0}, part2[16] = {0};
 
-        // 64ビットごとに分割して uint64_t に格納
-        for (int i = 0; i < 256; ++i) {
-            if (b1[i]) parts1[i / 64] |= (1ULL << (i % 64));
-            if (b2[i]) parts2[i / 64] |= (1ULL << (i % 64));
+        // 64ビットずつ整数に詰める
+        for (int block = 0; block < 16; ++block) {
+            for (int i = 0; i < 64; ++i) {
+                int bit_index = block * 64 + i;
+                if (b1[bit_index]) part1[block] |= (1ULL << i);
+                if (b2[bit_index]) part2[block] |= (1ULL << i);
+            }
         }
 
-        // 上位ビット（parts3）から比較
-        for (int k = 3; k >= 0; --k) {
-            if (parts1[k] != parts2[k])
-                return parts1[k] < parts2[k];
+        // 上位ブロックから比較（辞書順）
+        for (int block = 15; block >= 0; --block) {
+            if (part1[block] != part2[block])
+                return part1[block] < part2[block];
         }
 
-        return false;  // 全く同じなら b1 は b2 より小さくない
+        return false; // 全て同じ → a == b
     }
 };
 
 
+
+
+
 int calc_total = 0; /*Calcを実行した数を格納する*/
 
-std::map<std::bitset<256>, int, Comparer> m; 
+std::map<std::bitset<1024>, int, Comparer> m; 
 
 void Remove(int *Check, int num); /*Checkから取り除く*/
 void Print_Check(int *Check); /*Checkを出力*/
@@ -185,7 +190,7 @@ int Calc(int *Check)
     int Check_copy[size];
     int mex_o[size];
     int v,e,parity_uni;
-    std::bitset<256> b_check;
+    std::bitset<1024> b_check;
 
 /*現在のCheckの内容をbitsetにする*/
     for(i = 0; i < size; i++) {
@@ -197,12 +202,12 @@ int Calc(int *Check)
     }
 
 /*parity uniformを満たしていない局面を表示*/
-    if(p_uniform(Check)== 0) {
+    /*if(p_uniform(Check)== 0) {
         printf("\n");
         printf("@@@@@@@@@\n");
         Print_Check(Check);
         printf("@@@@@@@@@\n");
-    }
+    }*/
 
 
 
