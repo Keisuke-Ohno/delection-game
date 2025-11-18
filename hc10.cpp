@@ -104,7 +104,7 @@ int* Create_Check(void)
         Check[pp] = 1;
         pp = rotl1(pp, N);
     }
-    //Remove(Check,15);
+    //Remove(Check,1);
     //Remove(Check,30);
     //Remove(Check,60);
     //Remove(Check,64);
@@ -145,14 +145,27 @@ void Print_Check(int *Check)
     }
 }
 
-int count_bits(int n)
+/*int count_bits(int n)
 {
   int i;
   int sum=0;
   for(i=sizeof(int)*N-1;i>=0;i--)
     sum+=(n>>i)&1;
   return sum;
+}*/
+
+int count_bits(int n)
+{
+    unsigned int x = (unsigned int)n;
+    int sum = 0;
+
+    while (x) {
+        x &= (x - 1);  // 最下位の1を消す
+        sum++;
+    }
+    return sum;
 }
+
 
 void Print_bits(int a)
 {
