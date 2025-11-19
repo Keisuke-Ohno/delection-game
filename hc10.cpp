@@ -5,7 +5,7 @@
 #include <map>
 #include <cstdint>
 
-#define N 10/*vertexの数*/
+#define N 8/*vertexの数*/
 
 /*可変ビット幅での1bit左循環シフト*/
 uint32_t rotl1(uint32_t x, unsigned int width) {
@@ -104,7 +104,7 @@ int* Create_Check(void)
         Check[pp] = 1;
         pp = rotl1(pp, N);
     }
-    //Remove(Check,1);
+    //Remove(Check,15);
     //Remove(Check,30);
     //Remove(Check,60);
     //Remove(Check,64);
@@ -207,20 +207,6 @@ int Calc(int *Check)
         }
     }
 
-/*parity uniformを満たしていない局面を表示*/
-/*頂点しかないような局面の場合は出力させないための処理*/
-    for(i = 0; i < size; i++) {
-        if(count_bits(i) > 1 && Check[i] == 1) {
-            flag = 1;
-            break;
-        }
-    }
-    if(p_uniform(Check)== 0 && flag == 1) {
-        printf("\n");
-        printf("@@@@@@@@@\n");
-        Print_Check(Check);
-        printf("@@@@@@@@@\n");
-    }
 
 
 
@@ -262,6 +248,22 @@ int Calc(int *Check)
     v = v % 2;
     e = e % 2;
     parity_uni = v ^ (2*e);
+
+    /*parity uniformを満たしていない局面を表示*/
+/*頂点しかないような局面の場合は出力させないための処理*/
+    for(i = 0; i < size; i++) {
+        if(count_bits(i) > 1 && Check[i] == 1) {
+            flag = 1;
+            break;
+        }
+    }
+    if(p_uniform(Check)== 0 && flag == 1) {
+        printf("\n");
+        printf("@@@@@@@@@\n");
+        Print_Check(Check);
+        printf("@@@@@@@@@\n");
+    }
+
 
 
     /*式を使って求めた結果と計算した結果が一致しない局面を表示*/
