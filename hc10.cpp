@@ -5,7 +5,7 @@
 #include <map>
 #include <cstdint>
 
-#define N 9/*vertexの数*/
+#define N 10/*vertexの数*/
 
 /*可変ビット幅での1bit左循環シフト*/
 uint32_t rotl1(uint32_t x, unsigned int width) {
@@ -145,14 +145,6 @@ void Print_Check(int *Check)
     }
 }
 
-/*int count_bits(int n)
-{
-  int i;
-  int sum=0;
-  for(i=sizeof(int)*N-1;i>=0;i--)
-    sum+=(n>>i)&1;
-  return sum;
-}*/
 
 int count_bits(int n)
 {
@@ -198,10 +190,11 @@ int Calc(int *Check)
 {
     calc_total++;
     int i, j, k;
-    int g_value;
-    int N_P;
-    int Check_copy[size];
-    int mex_o[size];
+    int flag = 0;
+    int g_value; /*与えられた局面のg値を格納*/
+    int N_P;/**/
+    int Check_copy[size];/**/
+    int mex_o[size];/*与えられた局面から１手進んだ局面のg値を格納する配列*/
     int v,e,parity_uni;
     std::bitset<1024> b_check;
 
@@ -215,12 +208,19 @@ int Calc(int *Check)
     }
 
 /*parity uniformを満たしていない局面を表示*/
-    /*if(p_uniform(Check)== 0) {
+/*頂点しかないような局面の場合は出力させないための処理*/
+    for(i = 0; i < size; i++) {
+        if(count_bits(i) > 1 && Check[i] == 1) {
+            flag = 1;
+            break;
+        }
+    }
+    if(p_uniform(Check)== 0 && flag == 1) {
         printf("\n");
         printf("@@@@@@@@@\n");
         Print_Check(Check);
         printf("@@@@@@@@@\n");
-    }*/
+    }
 
 
 
