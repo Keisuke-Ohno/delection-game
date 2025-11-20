@@ -251,13 +251,8 @@ int Calc(int *Check)
 
     /*parity uniformを満たしていない局面を表示*/
 /*頂点しかないような局面の場合は出力させないための処理*/
-    for(i = 0; i < size; i++) {
-        if(count_bits(i) > 1 && Check[i] == 1) {
-            flag = 1;
-            break;
-        }
-    }
-    if(p_uniform(Check)== 0 && flag == 1) {
+    
+    if(p_uniform(Check) == -1) {
         printf("\n");
         printf("@@@@@@@@@\n");
         Print_Check(Check);
@@ -302,24 +297,45 @@ int mex(int *arr, int size) {
 /*その局面がparity uniformがどうかを求める*/
 int p_uniform(int *Check)
 {
-    int i,j;
-    int OK = 1;
+    int i, j;
+    int edges_count = 0;
 
-    for(i = 0; i < size; i++) {
-        for(j = 0; j < size; j++) {
-            if(Check[j] == 1 && count_bits(j) > 1) {
-                if((count_bits(i & j) % 2) == 0) {
-                    OK = 0;
-                    break;
-                }
-            }        
+    // collect edges (multi-vertex sets) into a small array for speed
+    int *edges = (int*)malloc(size * sizeof(int));
+    if (!edges) return -1; // allocation failed, treat as no solution
+
+    for (j = 0; j < size; ++j) {
+        if (Check[j] == 1 && count_bits(j) > 1) {
+            edges[edges_count++] = j;
         }
-        if(OK == 1) {
-            return i;
-        }
-        OK = 1;
     }
-    return 0;
+
+    // If there are no multi-vertex edges, return 0 as a trivial witness
+    if (edges_count == 0) {
+        free(edges);
+        return 0;
+    }
+
+    // Try every candidate i in 0..size-1
+    // Use builtin parity for speed: __builtin_parity unsigned int returns parity of number of 1-bits
+    for (i = 0; i < size; ++i) {
+        int ok = 1;
+        for (j = 0; j < edges_count; ++j) {
+            int ej = edges[j];
+            // parity of (i & ej) should be 1
+            if (!__builtin_parity((unsigned)(i & ej))) {
+                ok = 0;
+                break;
+            }
+        }
+        if (ok) {
+            free(edges);
+            return i; // found witness
+        }
+    }
+
+    free(edges);
+    return -1; // no witness found
 }
 
     
