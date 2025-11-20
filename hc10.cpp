@@ -5,7 +5,7 @@
 #include <map>
 #include <cstdint>
 
-#define N 8/*vertexの数*/
+#define N 6/*vertexの数*/
 
 /*可変ビット幅での1bit左循環シフト*/
 uint32_t rotl1(uint32_t x, unsigned int width) {
@@ -250,8 +250,6 @@ int Calc(int *Check)
     parity_uni = v ^ (2*e);
 
     /*parity uniformを満たしていない局面を表示*/
-/*頂点しかないような局面の場合は出力させないための処理*/
-    
     if(p_uniform(Check) == -1) {
         printf("\n");
         printf("@@@@@@@@@\n");
@@ -261,9 +259,8 @@ int Calc(int *Check)
 
 
 
-    /*式を使って求めた結果と計算した結果が一致しない局面を表示*/
-    /*
-    if(parity_uni != g_value) {
+    /*式を使って求めた結果と計算した結果が一致しないがparity uniformである局面を表示*/
+    if(parity_uni != g_value && p_uniform(Check) > 0) {
         printf("\n");
         printf("************************\n");
         printf("V = %d, E = %d\n", v, e);
@@ -271,7 +268,7 @@ int Calc(int *Check)
         Print_Check(Check);
         printf("************************");
         printf("\n");
-    }*/
+    }
 
     
 
