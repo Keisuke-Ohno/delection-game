@@ -5,7 +5,7 @@
 #include <map>
 #include <cstdint>
 
-#define N 6/*vertexの数*/
+#define N 7/*vertexの数*/
 
 /*可変ビット幅での1bit左循環シフト*/
 uint32_t rotl1(uint32_t x, unsigned int width) {
@@ -98,7 +98,8 @@ int* Create_Check(void)
         }
     }
 
-    uint32_t pp = 15;
+    //辺の大きさを決める(|E|=4 pp = 15, |E|=6 pp = 64)
+    uint32_t pp = 63;
     
     for(i = 0; i < N; i++) {
         Check[pp] = 1;
@@ -190,7 +191,6 @@ int Calc(int *Check)
 {
     calc_total++;
     int i, j, k;
-    int flag = 0;
     int g_value; /*与えられた局面のg値を格納*/
     int N_P;/**/
     int Check_copy[size];/**/
@@ -260,7 +260,7 @@ int Calc(int *Check)
 
 
     /*式を使って求めた結果と計算した結果が一致しないがparity uniformである局面を表示*/
-    if(parity_uni != g_value && p_uniform(Check) > 0) {
+    /*if(parity_uni != g_value && p_uniform(Check) > 0) {
         printf("\n");
         printf("************************\n");
         printf("V = %d, E = %d\n", v, e);
@@ -268,12 +268,8 @@ int Calc(int *Check)
         Print_Check(Check);
         printf("************************");
         printf("\n");
-    }
-
-    
-
+    }*/
     return g_value;
-
 }
     
 int mex(int *arr, int size) {
