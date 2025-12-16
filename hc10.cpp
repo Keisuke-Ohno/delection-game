@@ -5,7 +5,7 @@
 #include <map>
 #include <cstdint>
 
-#define N 7/*vertexの数*/
+#define N 6/*vertexの数*/
 
 /*可変ビット幅での1bit左循環シフト*/
 uint32_t rotl1(uint32_t x, unsigned int width) {
@@ -99,7 +99,7 @@ int* Create_Check(void)
     }
 
     //辺の大きさを決める(|E|=4 pp = 15, |E|=6 pp = 64)
-    uint32_t pp = 63;
+    uint32_t pp = 15;
     
     for(i = 0; i < N; i++) {
         Check[pp] = 1;
