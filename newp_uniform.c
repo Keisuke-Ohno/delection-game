@@ -112,7 +112,7 @@ void p_uniform(int *Check)
         }
     }
     
-   int A[E][V];
+   int A[E][V+1];
 
    printf("V = %d, E = %d\n", V, E);
 
@@ -134,12 +134,19 @@ void p_uniform(int *Check)
     }
 
     for(i = 0; i < E; i++) {
-        for(j = 0; j < V; j++) {
+        A[i][V] = 1;
+    }
+
+
+    for(i = 0; i < E; i++) {
+        for(j = 0; j < V+1; j++) {
             printf("%d, ", A[i][j]);
         }
         printf("\n");
     }
     printf("\n");
+
+    
 
 
 }
