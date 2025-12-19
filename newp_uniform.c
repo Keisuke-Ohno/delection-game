@@ -94,7 +94,7 @@ void Remove(int *Check, int num)
     }
 }
 
-void p_uniform(int *Check)
+int p_uniform(int *Check)
 {
    int i, j, k;
    int V=0,E=0;
@@ -146,16 +146,13 @@ void p_uniform(int *Check)
     }
     printf("\n");
 
-    gauss_elimination_GF2((int *)A, E, V+1);
+    
 
 
 
 }
 
-/* GF(2)上でガウスの掃き出し法を実行 */
-void gauss_elimination_GF2(int *matrix, int rows, int cols) {
-    
-} 
+
 
 int main(void)
 {
