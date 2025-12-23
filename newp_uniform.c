@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define N 6 /*vertexの数*/
+#define N 7 /*vertexの数*/
 
 
 int size = 1 << N; /*配列checkの大きさ*/
@@ -75,7 +75,7 @@ int* Create_Check(void)
         Check[pp] = 1;
         pp = rotl1(pp, N);
     }
-    //Remove(Check,387);
+    Remove(Check,1);
     //Remove(Check,30);
     //Remove(Check,57);
     return Check;
@@ -116,12 +116,12 @@ void p_uniform(int *Check)
    int A[E][V+1];
    int x[V];
 
-   /*printf("V = %d, E = %d\n", V, E);
+   printf("V = %d, E = %d\n", V, E);
 
    for(i = 0; i < E; i++) {
     printf("%d ", Edge[i]);
    }
-   printf("\n");*/
+   printf("\n");
 
 
 
@@ -141,14 +141,17 @@ void p_uniform(int *Check)
 
     
 
-
-    /*for(i = 0; i < E; i++) {
+    printf("[");
+    for(i = 0; i < E; i++) {
+        
+        printf("[");
         for(j = 0; j < V+1; j++) {
             printf("%d, ", A[i][j]);
         }
+        printf("]");
         printf("\n");
     }
-    printf("\n");*/
+    printf("]\n");
 
     answer = gauss_gf2(E, V, A, x);
 
