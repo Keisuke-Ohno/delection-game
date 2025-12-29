@@ -5,7 +5,7 @@
 #include <map>
 #include <cstdint>
 
-#define N 6/*vertexの数*/
+#define N 4/*vertexの数*/
 
 /*可変ビット幅での1bit左循環シフト*/
 uint32_t rotl1(uint32_t x, unsigned int width) {
