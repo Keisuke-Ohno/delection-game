@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define N 8 /*vertexの数*/
+#define N 4 /*vertexの数*/
 
 
 int size = 1 << N; /*配列checkの大きさ*/
