@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define N 7 /*vertexの数*/
+#define N 8 /*vertexの数*/
 
 
 int size = 1 << N; /*配列checkの大きさ*/
-int gauss_gf2(int E, int V, int A[E][V+1], int x[V]);
+int gauss_gf2(int E, int V, int A[E][N+1], int x[N]);
 uint32_t rotl1(uint32_t x, unsigned int width) {
     width = width % 32; // 念のため32ビット以上の値を正規化
     return ((x << 1) | (x >> (width - 1))) & ((1u << width) - 1);
@@ -76,8 +76,11 @@ int* Create_Check(void)
         pp = rotl1(pp, N);
     }
     Remove(Check,1);
-    //Remove(Check,30);
-    //Remove(Check,57);
+    Remove(Check,2);
+    Remove(Check,4);
+    Remove(Check,8);
+
+    
     return Check;
 } 
 void Remove(int *Check, int num) 
@@ -113,7 +116,7 @@ void p_uniform(int *Check)
         }
     }
     
-   int A[E][V+1];
+   int A[E][N+1];
    int x[V];
 
    printf("V = %d, E = %d\n", V, E);
@@ -127,7 +130,7 @@ void p_uniform(int *Check)
 
     for(i = 0; i < E; i++) {
         tmp = 1;
-        for(j = 0; j < V; j++) {
+        for(j = 0; j < N; j++) {
             k = Edge[i] & tmp;
             if(k > 0) { A[i][j] = 1; }
             else { A[i][j] = 0; }
@@ -136,7 +139,7 @@ void p_uniform(int *Check)
     }
 
     for(i = 0; i < E; i++) {
-        A[i][V] = 1;
+        A[i][N] = 1;
     }
 
     
@@ -145,7 +148,7 @@ void p_uniform(int *Check)
     for(i = 0; i < E; i++) {
         
         printf("[");
-        for(j = 0; j < V+1; j++) {
+        for(j = 0; j < N+1; j++) {
             printf("%d, ", A[i][j]);
         }
         printf("]");
@@ -153,11 +156,11 @@ void p_uniform(int *Check)
     }
     printf("]\n");
 
-    answer = gauss_gf2(E, V, A, x);
+    answer = gauss_gf2(E, N, A, x);
 
     if(answer == 0) {
         printf("answer = {");
-        for(i = 0; i < V; i++) {
+        for(i = 0; i < N; i++) {
             printf("%d, ", x[i]);
         }
         printf("}\n");
@@ -240,13 +243,7 @@ int main(void)
 
     p_uniform(Check);
 
-
     printf("size = %d\n", size);
-
-    
-
-    
-    
 
     free(Check);
     return 0;
