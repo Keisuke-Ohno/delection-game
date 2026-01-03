@@ -22,9 +22,6 @@ int size = 1 << N; /*配列checkの大きさ*/
 
 
 /*bitsetの大小を定義する関数*/
-
-/* 今回は12bitをサポートするため std::bitset<4096> を使います。
-   4096 = 2^12, 64ブロックの 64-bit ワードへ分割して辞書順比較します。 */
 struct Comparer {
     bool operator()(const std::bitset<bset_size> &b1, const std::bitset<bset_size> &b2) const {
         const int BLOCKS = bset_size / 64; // 64
@@ -181,7 +178,6 @@ void Print_bits(int a)
         if(b == 1) {
             printf("%d, ", i+1);
         }
-
     }
     printf("}");
 }
@@ -202,12 +198,12 @@ int Calc(int *Check)
 {
     calc_total++;
     int i, j, k;
-    int flag = 0;
+    int flag = 0, tmp;
     int g_value; /*与えられた局面のg値を格納*/
     int N_P;/**/
     int Check_copy[size];/**/
     int mex_o[size];/*与えられた局面から１手進んだ局面のg値を格納する配列*/
-    int v,e,parity_uni;
+    int v=0,e=0,parity_uni;
     std::bitset<bset_size> b_check;
 
 /*現在のCheckの内容をbitsetにする*/
@@ -219,15 +215,47 @@ int Calc(int *Check)
         }
     }
 
-
-
-
-
 /*もし前に全く同じ局面のg-valueを計算していたのならばその時の結果を返す*/
     if(m.count(b_check) != 0) {
         return m.at(b_check);
     }
 
+     /*頂点しかないような局面の場合は出力させないための処理*/
+    for(i = 0; i < size; i++) {
+        if(count_bits(i) > 1 && Check[i] == 1) {
+            flag = 1;
+            break;
+        }
+    }
+
+    tmp = p_uniform(Check);
+    /* p_uniform now returns -1 on no solution, or returns a witness i (0..size-1) */
+    if(tmp == -1 && flag == 1) {
+        printf("@@@@@@@@@");
+        Print_Check(Check);
+        printf("@@@@@@@@@\n");
+    } 
+    
+    /*parity_uniformならば公式によりg値を計算する*/
+    if(tmp > 0 && flag == 1) {
+        for(i = 0; i < size; i++){
+            if(count_bits(i) == 1 && Check[i] == 1) {
+                v++;
+            } else if(count_bits(i) > 1 && Check[i] == 1) {
+                e++;
+            }
+        }
+        v = v % 2;
+        e = e % 2;
+        parity_uni = v ^ (2*e);
+
+        /*mapに登録する*/
+        m.insert(std::make_pair(b_check, parity_uni));
+
+        return parity_uni;
+    }
+
+    /*再起的にg値を計算する*/
     k = 0;
     for(i = 0; i < size; i++) {
         if(Check[i] == 1) {
@@ -247,35 +275,6 @@ int Calc(int *Check)
     }
     g_value = mex(mex_o, k);
     m.insert(std::make_pair(b_check, g_value));
-
-    v = 0;
-    e = 0;
-    for(i = 0; i < size; i++){
-        if(count_bits(i) == 1 && Check[i] == 1) {
-            v++;
-        } else if(count_bits(i) > 1 && Check[i] == 1) {
-            e++;
-        }
-    }
-    v = v % 2;
-    e = e % 2;
-    parity_uni = v ^ (2*e);
-
-    /*parity uniformを満たしていない局面を表示*/
-/*頂点しかないような局面の場合は出力させないための処理*/
-    for(i = 0; i < size; i++) {
-        if(count_bits(i) > 1 && Check[i] == 1) {
-            flag = 1;
-            break;
-        }
-    }
-    /* p_uniform now returns -1 on no solution, or returns a witness i (0..size-1) */
-    if(p_uniform(Check) == -1 && flag == 1) {
-        printf("@@@@@@@@@");
-        Print_Check(Check);
-        printf("@@@@@@@@@\n");
-    }
-
 
     return g_value;
 
