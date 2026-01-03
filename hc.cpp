@@ -5,7 +5,11 @@
 #include <map>
 #include <cstdint>
 
-#define N 8/*vertexの数*/
+/*実行するために確認するところ
+1 N, 2 bset_size, 3 pp, 4 remove
+*/
+
+#define N 9/*vertexの数*/
 #define bset_size 4096/*bitsetの大きさ(2^N)*/
 
 /*可変ビット幅での1bit左循環シフト*/
