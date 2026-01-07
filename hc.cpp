@@ -9,8 +9,8 @@
 1 N, 2 bset_size, 3 pp, 4 remove
 */
 
-#define N 9/*vertexの数*/
-#define bset_size 4096/*bitsetの大きさ(2^N)*/
+#define N 5/*vertexの数*/
+#define bset_size (1 << N)/*bitsetの大きさ(2^N)*/
 
 /*可変ビット幅での1bit左循環シフト*/
 uint32_t rotl1(uint32_t x, unsigned int width) {
@@ -113,14 +113,14 @@ int* Create_Check(void)
         Check[pp] = 1;
         pp = rotl1(pp, N);
     }
-    //Remove(Check,15);
+    Remove(Check,1);
     //Remove(Check,30);
     //Remove(Check,60);
     //Remove(Check,64);
 
     return Check;
 
-} 
+}
 
 
 void Remove(int *Check, int num) 
@@ -237,7 +237,7 @@ int Calc(int *Check)
     } 
     
     /*parity_uniformならば公式によりg値を計算する*/
-    if(tmp > 0 && flag == 1) {
+    /*if(tmp > 0 && flag == 1) {
         for(i = 0; i < size; i++){
             if(count_bits(i) == 1 && Check[i] == 1) {
                 v++;
@@ -249,11 +249,11 @@ int Calc(int *Check)
         e = e % 2;
         parity_uni = v ^ (2*e);
 
-        /*mapに登録する*/
+        //mapに登録する
         m.insert(std::make_pair(b_check, parity_uni));
 
         return parity_uni;
-    }
+    }*/
 
     /*再起的にg値を計算する*/
     k = 0;
@@ -274,6 +274,13 @@ int Calc(int *Check)
     //mapに追加
     }
     g_value = mex(mex_o, k);
+
+    printf("mex:");
+    for(i = 0; i < k; i++) {
+        printf("%d ", mex_o[i]);
+    }
+    printf("\n");
+
     m.insert(std::make_pair(b_check, g_value));
 
     return g_value;
