@@ -9,7 +9,7 @@
 1 N, 2 bset_size, 3 pp, 4 remove
 */
 
-#define N 6/*vertexの数*/
+#define N 8/*vertexの数*/
 #define bset_size (1 << N)/*bitsetの大きさ(2^N)*/
 //(注意)Nが５の時はbset_sizeを64にしておく必要がある
 
