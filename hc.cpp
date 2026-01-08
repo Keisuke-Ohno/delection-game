@@ -6,7 +6,7 @@
 #include <cstdint>
 
 /*実行するために確認するところ
-1 N, 2 bset_size, 3 pp, 4 remove
+1 N, 2 bset_size, 3 E_size, 4 remove
 */
 
 #define N 8/*vertexの数*/
@@ -109,11 +109,11 @@ int* Create_Check(void)
     }
 
     //辺の大きさを決める　大きさ４ 15、大きさ６　63
-    uint32_t pp = 15; 
+    uint32_t E_size = 15; 
     
     for(i = 0; i < N; i++) {
-        Check[pp] = 1;
-        pp = rotl1(pp, N);
+        Check[E_size] = 1;
+        E_size = rotl1(E_size, N);
     }
     //Remove(Check,1);
     //Remove(Check,30);
