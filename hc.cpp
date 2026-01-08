@@ -61,7 +61,6 @@ std::map<std::bitset<bset_size>, int, Comparer> m;
 
 void Remove(int *Check, int num); /*Checkから取り除く*/
 void Print_Check(int *Check); /*Checkを出力*/
-int Continue(int *Check, int size); /*全て取り除かれたか判定*/
 int* Create_Check(void); /*Checkを作成*/
 void Print_bits(int a); /*要素を出力*/
 int count_bits(int n); /*引数を2進数にしたときに幾つ１が出てくるか*/
@@ -184,17 +183,6 @@ void Print_bits(int a)
     printf("}");
 }
 
-/*int Continue(int *Check)
-{
-    int i;
-
-    for(i = 0; i < size; i++) {
-        if(Check[i] == 1) {
-            return 1;
-        }
-    }
-    return 0;
-}*/
 
 int Calc(int *Check)
 {
