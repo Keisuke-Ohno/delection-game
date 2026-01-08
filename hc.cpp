@@ -184,7 +184,7 @@ void Print_bits(int a)
     printf("}");
 }
 
-int Continue(int *Check)
+/*int Continue(int *Check)
 {
     int i;
 
@@ -194,7 +194,7 @@ int Continue(int *Check)
         }
     }
     return 0;
-}
+}*/
 
 int Calc(int *Check)
 {
