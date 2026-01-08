@@ -11,6 +11,7 @@
 
 #define N 8/*vertexの数*/
 #define bset_size (1 << N)/*bitsetの大きさ(2^N)*/
+//#define bset_size 64 
 //(注意)Nが５の時はbset_sizeを64にしておく必要がある
 
 /*可変ビット幅での1bit左循環シフト*/
