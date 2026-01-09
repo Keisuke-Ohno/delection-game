@@ -9,10 +9,10 @@
 1 N, 2 bset_size, 3 E_size, 4 remove
 */
 
-#define N 8/*vertexの数*/
+#define N 6/*vertexの数*/
 #define bset_size (1 << N)/*bitsetの大きさ(2^N)*/
 //#define bset_size 64 
-//(注意)Nが５の時はbset_sizeを64にしておく必要がある
+//(注意)Nが５以下の時はbset_sizeを64にしておく必要がある
 
 /*可変ビット幅での1bit左循環シフト*/
 uint32_t rotl1(uint32_t x, unsigned int width) {
@@ -67,7 +67,7 @@ int count_bits(int n); /*引数を2進数にしたときに幾つ１が出てく
 int Calc(int *Check); /*再帰関数でg-valueを計算*/
 int mex(int *arr, int size); /*引数の配列の要素の中で最大の非負整数を返す*/
 int p_uniform(int *Check); /*与えられた局面がp_unoformを満たしているかを判定*/
-int gauss_gf2(int E, int V, int **A, int *x);
+int gauss_gf2(int E, int V, int **A, int *x); /*ガウスの掃き出し法を使って連立方程式を解く*/
 
 int main(void)
 {
@@ -213,20 +213,20 @@ int Calc(int *Check)
      /*頂点しかないような局面の場合は出力させないための処理*/
     for(i = 0; i < size; i++) {
         if(count_bits(i) > 1 && Check[i] == 1) {
-            flag = 1;
+            flag = 1; //flag = 0だったら頂点のみの局面ということになる
             break;
         }
     }
 
     tmp = p_uniform(Check);
-    /* p_uniform now returns -1 on no solution, or returns a witness i (0..size-1) */
+    //parity uniformを満たしていないような局面を表示(頂点のみの局面は除く)
     if(tmp == -1 && flag == 1) {
         printf("@@@@@@@@@");
         Print_Check(Check);
         printf("@@@@@@@@@\n");
     } 
     
-    /*parity_uniformならば公式によりg値を計算する*/
+    //parity_uniformならば公式によりg値を計算する(頂点のみの局面は除く)
     if(tmp > 0 && flag == 1) {
         for(i = 0; i < size; i++){
             if(count_bits(i) == 1 && Check[i] == 1) {
@@ -235,9 +235,9 @@ int Calc(int *Check)
                 e++;
             }
         }
-        v = v % 2;
+        v = v % 2; //辺、頂点の偶奇を用いる
         e = e % 2;
-        parity_uni = v ^ (2*e);
+        parity_uni = v ^ (2*e); //このコードではpが偶数の場合しか計算しないため、pを省略している
 
         //mapに登録する
         m.insert(std::make_pair(b_check, parity_uni));
@@ -323,7 +323,7 @@ int p_uniform(int *Check)
     printf("\n");*/
 
 
-
+    /*隣接行列を作成*/
     for(i = 0; i < E; i++) {
         tmp = 1;
         for(j = 0; j < N; j++) {
@@ -334,6 +334,7 @@ int p_uniform(int *Check)
         }
     }
 
+    /*拡大係数行列にする*/
     for(i = 0; i < E; i++) {
         A[i][N] = 1;
     }
@@ -360,8 +361,6 @@ int p_uniform(int *Check)
     delete[] A;          // 行ポインタ配列を解放        
 
     return answer;
-
-
 }
 
 int gauss_gf2(int E, int V, int **A, int *x)
