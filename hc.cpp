@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <bitset>
 #include <iostream>
 #include <map>
@@ -71,6 +72,9 @@ int gauss_gf2(int E, int V, int **A, int *x); /*ガウスの掃き出し法を�
 
 int main(void)
 {
+    clock_t start,end;
+
+    start = clock();
     int* Check = Create_Check();
 
     Print_Check(Check);
@@ -78,11 +82,15 @@ int main(void)
 
     printf("size = %d\n", size);
 
-    
-   printf("result = %d\n", Calc(Check)); 
-   printf("calc_total = %d\n", calc_total);
-   printf("mapsize=%d\n", (int)m.size());
-   
+    printf("result = %d\n", Calc(Check)); 
+    printf("calc_total = %d\n", calc_total);
+    printf("mapsize=%d\n", (int)m.size());
+
+    end = clock();
+
+    double sec = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("Time: %.6f sec\n", sec);
+
     free(Check);
     return 0;
 }
